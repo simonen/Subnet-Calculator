@@ -1,5 +1,5 @@
 import pandas as pd
-
+import copy
 
 def str_split(string: str) -> list:
     return [string[j: j + 8] for j in range(0, 32, 8)]
@@ -130,7 +130,7 @@ for i in range(total_subnets):
     last = str_split(last_usable(broadcast))
 
     if net_addr_dec == decimal(curr_subnet_bin):
-        my_subnet.extend([[decimal(curr_subnet_bin), curr_subnet_bin], [decimal(broadcast), broadcast],
+        my_subnet.extend([[decimal(curr_subnet_bin), tuple(curr_subnet_bin)], [decimal(broadcast), broadcast],
                           [decimal(first), first], [decimal(last), last]])
 
         mark = '<--'
@@ -138,6 +138,8 @@ for i in range(total_subnets):
     all_addresses.append([decimal(curr_subnet_bin), decimal(first), decimal(last), decimal(broadcast), [mark]])
 
 pd.options.display.max_colwidth = None
+pd.set_option("display.max_rows", None)
+
 df = pd.DataFrame(all_addresses, columns=['network address', 'first usable', 'last usable', 'broadcast address', 'you'])
 df = df.map(to_dotted_decimal)
 
@@ -152,6 +154,8 @@ df_a = pd.DataFrame(my_subnet,
                     columns=['decimal', 'binary'],
                     index=['ip address', 'subnet mask', 'network address', 'broadcast address',
                            'first usable', 'last usable', 'wildcard mask'])
+
+
 
 df_a = df_a.map(to_dotted_decimal)
 df_b = pd.DataFrame(stats,
